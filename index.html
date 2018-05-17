@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="style.css">
+
+    <script type="text/javascript">
+        // function add() {
+        //     inputText = document.getElementById("task");
+        //     list = document.getElementById("list");
+
+        //     var newItem = document.createElement('p');
+        //     list.appendChild(newItem);
+        //     list.lastChild.innerHTML = inputText.value;
+
+        //     var separator = document.createElement('hr');
+        //     list.appendChild(separator);
+        // }
+
+        var count = 0;
+        var completed= 0;
+
+        function add() {
+
+            inputText = document.getElementById("task");
+            countText = document.getElementById("count");
+            list = document.getElementById("list");
+
+            //create container for para, button
+            var newItem = document.createElement('div');
+            newItem.style.display = "flex";
+            newItem.style.flexDirection = "row";
+            newItem.style.justifyContent = "center";
+            newItem.style.marginTop = "24px";
+
+            //append para
+            var para = document.createElement('p');
+            newItem.appendChild(para);
+            para.innerHTML = inputText.value;
+            para.style.marginTop = "0px";
+            para.style.marginRight = "16px";
+
+            //append button
+            var button = document.createElement('button');
+            button.style.width = "25px";
+            button.style.height = "10px";
+            button.onclick = function () {
+                 button.style.background = "red";
+                // button.parentElement.style.display = "none";
+                completed++;
+                countText.innerHTML =  "Number of items: "  +count+ "<br>" +completed/count*100 + "%";
+                //newItem.style.display = "none";
+                newItem.style.textDecoration = "line-through";
+                //list.removeChild(list.childNodes[count]);
+            }
+
+            button.style.marginTop = "5px";
+            newItem.appendChild(button);
+
+            list.appendChild(newItem);
+
+            // //append hr
+            // var separator = document.createElement('hr');
+            // list.appendChild(separator);
+
+            count++;
+            countText.innerHTML =  "Number of items: "  +count+ "<br>" +completed/count*100 + "%";
+        }
+
+        function remove() {
+            console.log("sjdfh");
+        }
+    </script>
+
+    <title>To Do</title>
+</head>
+
+
+<body>
+
+    <!-- CONTAINER -->
+    <section class="vertical-container">
+        <p id="count">Number of items: 0 <br>Infinity% completed</p>
+        <!-- TEXT INPUT, BUTTONS -->
+        <div class="horizontal-container">
+            <input type="text" id="task" name="task"Number of items: 0 value="take a nap">
+            <button class="add" id="add" onclick="add()">Add</button>
+            <button class="remove" id="remove" onclick="remove()">Remove</button>
+        </div>
+
+        <!-- LIST -->
+        <div class="list" id="list">
+
+        </div>
+    </section>
+
+</body>
+
+</html>
