@@ -8,33 +8,54 @@
     <link rel="stylesheet" href="style.css">
 
     <script type="text/javascript">
-        // function add() {
-        //     inputText = document.getElementById("task");
-        //     list = document.getElementById("list");
-
-        //     var newItem = document.createElement('p');
-        //     list.appendChild(newItem);
-        //     list.lastChild.innerHTML = inputText.value;
-
-        //     var separator = document.createElement('hr');
-        //     list.appendChild(separator);
-        // }
 
         var count = 0;
-        var completed= 0;
+        var completed = 0;
 
         function add() {
 
             inputText = document.getElementById("task");
-            countText = document.getElementById("count");
+
+            //return if task is empty
+            if (inputText.value == "") {
+                return;
+            }
+
+            percentText = document.getElementById("percentText");
+            percentBar = document.getElementById("percent-bar"); 
+            percentBarFill = document.getElementById("percent-bar-fill");
             list = document.getElementById("list");
 
-            //create container for para, button
+            //create container for checkbox, para
             var newItem = document.createElement('div');
             newItem.style.display = "flex";
             newItem.style.flexDirection = "row";
-            newItem.style.justifyContent = "center";
-            newItem.style.marginTop = "24px";
+            newItem.style.justifyContent = "flex-start";
+            newItem.style.marginTop = "0px";
+            newItem.style.marginLeft = "25px";
+            newItem.style.color = "#838c91";
+            //append checkbox
+            var checkbox = document.createElement('input');
+            // button.style.width = "25px";
+            // button.style.height = "10px";
+            checkbox.type = "checkbox";
+            checkbox.style.margin = "0";
+            checkbox.style.marginTop = "2px";
+            newItem.appendChild(checkbox);
+            checkbox.onclick = function () {
+                if (checkbox.checked == true) {
+                    completed++;
+                    newItem.style.textDecoration = "line-through";
+                } else {
+                    completed--;
+                    newItem.style.textDecoration = "none";
+                }
+
+                var progressBarWidth = getComputedStyle(percentBar).getPropertyValue("width");
+                progressBarWidth = progressBarWidth.slice(0, progressBarWidth.length-2);
+                percentBarFill.style.width = ""+Math.round(completed / count * progressBarWidth)+"px";
+                percentText.innerHTML = Math.round(completed / count * 100) + "%";
+            }
 
             //append para
             var para = document.createElement('p');
@@ -42,32 +63,16 @@
             para.innerHTML = inputText.value;
             para.style.marginTop = "0px";
             para.style.marginRight = "16px";
-
-            //append button
-            var button = document.createElement('button');
-            button.style.width = "25px";
-            button.style.height = "10px";
-            button.onclick = function () {
-                 button.style.background = "red";
-                // button.parentElement.style.display = "none";
-                completed++;
-                countText.innerHTML =  "Number of items: "  +count+ "<br>" +completed/count*100 + "%";
-                //newItem.style.display = "none";
-                newItem.style.textDecoration = "line-through";
-                //list.removeChild(list.childNodes[count]);
-            }
-
-            button.style.marginTop = "5px";
-            newItem.appendChild(button);
-
+            para.style.color = "#838c91";
+            para.style.paddingLeft = "8px";
             list.appendChild(newItem);
 
-            // //append hr
-            // var separator = document.createElement('hr');
-            // list.appendChild(separator);
 
+            //update count
             count++;
-            countText.innerHTML =  "Number of items: "  +count+ "<br>" +completed/count*100 + "%";
+            percentBarFill.style.width = ""+Math.round(completed / count * 340)+"px";
+            percentText.innerHTML = Math.round(completed / count * 100) + "%";
+            inputText.value = "";
         }
 
         function remove() {
@@ -82,21 +87,43 @@
 <body>
 
     <!-- CONTAINER -->
+
     <section class="vertical-container">
-        <p id="count">Number of items: 0 <br>Infinity% completed</p>
-        <!-- TEXT INPUT, BUTTONS -->
-        <div class="horizontal-container">
-            <input type="text" id="task" name="task"Number of items: 0 value="take a nap">
-            <button class="add" id="add" onclick="add()">Add</button>
-            <button class="remove" id="remove" onclick="remove()">Remove</button>
+
+
+        <!-- HEADING -->
+        <div class="heading-container">
+            <img src="img/checkbox.png" alt="Checkbox icon" class="icon" id="icon">
+            <h4 class="heading">Checklist</h4>
         </div>
+
+
+        <!-- % Stats UI -->
+        <div class="stats-container">
+            <p id="percentText" class="percentText">0%</p>
+
+            <div class="percent-bar-container" id="percent-bar-container">
+                <div id="percent-bar" class="percent-bar"></div>
+                <div id="percent-bar-fill" class="percent-bar-fill"></div>
+            </div>
+
+
+        </div>
+
 
         <!-- LIST -->
         <div class="list" id="list">
 
+
+
+        </div>
+
+        <!-- TEXT INPUT -->
+        <textarea rows="4" cols="50" placeholder="Add an item..." class="inputText" id="task" name="task"></textarea>
+        <!-- BUTTON -->
+        <button class="add" id="add" onclick="add()">Add</button>
         </div>
     </section>
-
 </body>
 
 </html>
