@@ -1,9 +1,33 @@
 var count = 0;
 var completed = 0;
 
-function add() {
 
-    percentTextstyle = document.getElementById("percentText");
+function updateStats(percentText, percentBar, percentBarFill) {
+    var progressBarWidth = getComputedStyle(percentBar).getPropertyValue("width");
+    progressBarWidth = progressBarWidth.slice(0, progressBarWidth.length - 2);
+    percentBarFill.style.width = "" + Math.round(completed / count * progressBarWidth) + "px";
+    percentText.innerHTML = Math.round(completed / count * 100) + "%";
+}
+
+function keyUp(event) {
+    event.preventDefault();
+
+    inputText = document.getElementById("input-text");
+    //return if edit text contains only whitespaces 
+    if (inputText.value.trim() == "") {
+        inputText.value = "";
+        return;
+    }
+    if (event.keyCode === 13) {
+        document.getElementById("add").click();
+    }
+}
+
+function loaded() {}
+
+function addToDo() {
+
+    percentText = document.getElementById("percent-text");
     percentBar = document.getElementById("percent-bar");
     percentBarFill = document.getElementById("percent-bar-fill");
     list = document.getElementById("list");
@@ -14,7 +38,6 @@ function add() {
     if (inputText.value == "") {
         return;
     }
-
 
     //create container for checkbox, para
     var newItem = document.createElement('div');
@@ -38,10 +61,7 @@ function add() {
             newItem.style.textDecoration = "none";
         }
 
-        var progressBarWidth = getComputedStyle(percentBar).getPropertyValue("width");
-        progressBarWidth = progressBarWidth.slice(0, progressBarWidth.length - 2);
-        percentBarFill.style.width = "" + Math.round(completed / count * progressBarWidth) + "px";
-        percentText.innerHTML = Math.round(completed / count * 100) + "%";
+        updateStats(percentText, percentBar, percentBarFill);
     }
 
 
@@ -81,8 +101,7 @@ function add() {
             return;
         }
 
-        percentBarFill.style.width = "" + Math.round(completed / count * 340) + "px";
-        percentText.innerHTML = Math.round(completed / count * 100) + "%";
+        updateStats(percentText, percentBar, percentBarFill);
     }
 
 
@@ -98,9 +117,9 @@ function add() {
         deleteButton.style.visibility = "hidden";
     }
 
-    //update stats UI
+    //update stats UI, etc
     count++;
-    percentBarFill.style.width = "" + Math.round(completed / count * 340) + "px";
-    percentText.innerHTML = Math.round(completed / count * 100) + "%";
+    updateStats(percentText, percentBar, percentBarFill);
     inputText.value = "";
+    inputText.focus();
 }

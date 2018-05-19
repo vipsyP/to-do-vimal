@@ -55,7 +55,7 @@ body {
     margin-bottom: 0px;
 }
 
-.percentText {
+.percent-text {
     margin: 0;
     margin-bottom: 4px;
     font-size: 13px;
@@ -141,7 +141,7 @@ body {
 /* EDIT TEXT */
 
 .input-text {
-    width: auto;
+    resize: vertical;
     border-radius: 3px;
     margin-left: 25px;
     margin-top: 8px;

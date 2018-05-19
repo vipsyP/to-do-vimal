@@ -11,7 +11,7 @@
 </head>
 
 
-<body>
+<body onLoad = "loaded()">
 
     <!-- CONTAINER -->
     <section class="outermost-container">
@@ -29,7 +29,7 @@
         <!-- Stats UI -->
         <div class="stats-container">
 
-            <p id="percentText" class="percentText">0%</p>
+            <p id="percent-text" class="percent-text">0%</p>
 
             <div class="percent-bar-container" id="percent-bar-container">
                 <div id="percent-bar" class="percent-bar"></div>
@@ -44,9 +44,9 @@
 
 
         <!-- EDIT TEXT -->
-        <textarea rows="1" placeholder="Add an item..." class="input-text" id="input-text" name="task"></textarea>
+        <textarea onkeyup = "keyUp(event)" rows="1" placeholder="Add an item..." class="input-text" id="input-text" name="task"></textarea>
         <!-- BUTTON -->
-        <button class="add" id="add" onclick="add()">Add</button>
+        <button class="add" id="add" onclick="addToDo()">Add</button>
 
 
     </section>
