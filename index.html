@@ -1,85 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link rel="stylesheet" href="style.css">
-
-    <script type="text/javascript">
-
-        var count = 0;
-        var completed = 0;
-
-        function add() {
-
-            inputText = document.getElementById("task");
-
-            //return if task is empty
-            if (inputText.value == "") {
-                return;
-            }
-
-            percentText = document.getElementById("percentText");
-            percentBar = document.getElementById("percent-bar"); 
-            percentBarFill = document.getElementById("percent-bar-fill");
-            list = document.getElementById("list");
-
-            //create container for checkbox, para
-            var newItem = document.createElement('div');
-            newItem.style.display = "flex";
-            newItem.style.flexDirection = "row";
-            newItem.style.justifyContent = "flex-start";
-            newItem.style.marginTop = "0px";
-            newItem.style.marginLeft = "25px";
-            newItem.style.color = "#838c91";
-            //append checkbox
-            var checkbox = document.createElement('input');
-            // button.style.width = "25px";
-            // button.style.height = "10px";
-            checkbox.type = "checkbox";
-            checkbox.style.margin = "0";
-            checkbox.style.marginTop = "2px";
-            newItem.appendChild(checkbox);
-            checkbox.onclick = function () {
-                if (checkbox.checked == true) {
-                    completed++;
-                    newItem.style.textDecoration = "line-through";
-                } else {
-                    completed--;
-                    newItem.style.textDecoration = "none";
-                }
-
-                var progressBarWidth = getComputedStyle(percentBar).getPropertyValue("width");
-                progressBarWidth = progressBarWidth.slice(0, progressBarWidth.length-2);
-                percentBarFill.style.width = ""+Math.round(completed / count * progressBarWidth)+"px";
-                percentText.innerHTML = Math.round(completed / count * 100) + "%";
-            }
-
-            //append para
-            var para = document.createElement('p');
-            newItem.appendChild(para);
-            para.innerHTML = inputText.value;
-            para.style.marginTop = "0px";
-            para.style.marginRight = "16px";
-            para.style.color = "#838c91";
-            para.style.paddingLeft = "8px";
-            list.appendChild(newItem);
-
-
-            //update count
-            count++;
-            percentBarFill.style.width = ""+Math.round(completed / count * 340)+"px";
-            percentText.innerHTML = Math.round(completed / count * 100) + "%";
-            inputText.value = "";
-        }
-
-        function remove() {
-            console.log("sjdfh");
-        }
-    </script>
-
+    <script type="text/javascript" src="script.js"></script>
     <title>To Do</title>
 </head>
 
@@ -87,19 +14,21 @@
 <body>
 
     <!-- CONTAINER -->
+    <section class="outermost-container">
 
-    <section class="vertical-container">
 
-
-        <!-- HEADING -->
+        <!-- ICON & HEADING -->
         <div class="heading-container">
+
             <img src="img/checkbox.png" alt="Checkbox icon" class="icon" id="icon">
             <h4 class="heading">Checklist</h4>
+
         </div>
 
 
-        <!-- % Stats UI -->
+        <!-- Stats UI -->
         <div class="stats-container">
+
             <p id="percentText" class="percentText">0%</p>
 
             <div class="percent-bar-container" id="percent-bar-container">
@@ -107,22 +36,19 @@
                 <div id="percent-bar-fill" class="percent-bar-fill"></div>
             </div>
 
-
         </div>
+        <!-- <hr> -->
+
+        <!-- TO DO LIST -->
+        <div class="list" id="list"></div>
 
 
-        <!-- LIST -->
-        <div class="list" id="list">
-
-
-
-        </div>
-
-        <!-- TEXT INPUT -->
-        <textarea rows="4" cols="50" placeholder="Add an item..." class="inputText" id="task" name="task"></textarea>
+        <!-- EDIT TEXT -->
+        <textarea rows="1" placeholder="Add an item..." class="input-text" id="input-text" name="task"></textarea>
         <!-- BUTTON -->
         <button class="add" id="add" onclick="add()">Add</button>
-        </div>
+
+
     </section>
 </body>
 
