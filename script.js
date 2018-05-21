@@ -4,8 +4,10 @@ var completed;
 var percentText;
 var percentBar;
 var percentBarFill;
+
 var list;
 var inputText;
+
 var checkOrNot;
 
 
@@ -18,11 +20,9 @@ function initialize() {
     percentBarFill = document.getElementById("percent-bar-fill");
     list = document.getElementById("list");
     inputText = document.getElementById("input-text");
-
-
 }
 
-
+// UPDATE STATS UI-- PERCENT TEXT, BAR, & FILL
 function updateStats(percentText, percentBar, percentBarFill) {
     var progressBarWidth = getComputedStyle(percentBar).getPropertyValue("width");
     progressBarWidth = progressBarWidth.slice(0, progressBarWidth.length - 2);
@@ -30,6 +30,7 @@ function updateStats(percentText, percentBar, percentBarFill) {
     percentText.innerHTML = Math.round(completed / count * 100) + "%";
 }
 
+//CAPTURE ENTER KEY UP 
 function keyUp(event) {
     event.preventDefault();
 
@@ -44,9 +45,11 @@ function keyUp(event) {
     }
 }
 
+// WHEN THE DOCUMENT LOADS
 function loaded() {
     initialize();
 
+    //get count & completed from localStorage--actually redundant
     var tempCount;
     if ((tempCount = localStorage.getItem("count")) == null)
         tempCount = 0;
@@ -55,7 +58,8 @@ function loaded() {
     tempCount = Number(tempCount);
     tempCompleted = Number(tempCompleted);
 
-    //console.log("1: "+localStorage.getItem("innerList"));
+    //get list from localStorage
+    //if list is empty, there's nothing to load
     if ((innerList = localStorage.getItem("innerList")) == null) {
         innerList = "";
         return;
@@ -63,57 +67,57 @@ function loaded() {
     if (innerList.trim() == "") {
         return;
     }
-    //console.log("2 "+innerList);
 
+    //create a temporary list--for iterating on to-do items from localStorage
     var tempList = document.createElement('div');
+
+    //attach temporary list to body--temporarily of course 
     var body = document.getElementById("body");
     body.appendChild(tempList);
     tempList.innerHTML = innerList;
-    //console.log(tempList.innerHTML);
 
+    //iterate through the to-do's of the temporary list
     var i = 0;
     var listOffspring = tempList.firstChild;
-
-    //console.log(listOffspring.innerHTML);
     while (i < tempCount) {
+
+        //store to-do text
         inputText.value = listOffspring.getElementsByClassName("para")[0].innerHTML;
 
-        //console.log(i +" : "+ listOffspring.getElementsByTagName("input")[0].className);
-
+        //record checkbox state
         if (listOffspring.getElementsByTagName("input")[0].className == null) {
             listOffspring.getElementsByTagName("input")[0].className = "checkbox";
         }
         if (listOffspring.getElementsByTagName("input")[0].className == "checkbox checked") {
             checkOrNot = true;
-        }
-         else {
+        } 
+        else {
             checkOrNot = false;
         }
-        console.log(checkOrNot);
+
+        // create to-do & append to actual list
         addToDo(true);
+
         listOffspring = listOffspring.nextSibling;
         i = i + 1;
     }
 
+    // delete temporary list
     body.removeChild(tempList);
-
-
-    console.log(tempCount);
-    console.log(tempCompleted);
-    console.log(innerList);
 }
 
+// WHEN THE USER CLOSES THE PAGE OR RELOADS
 function unloading() {
-
+    //store count, completed, & list to localStorage
     localStorage.setItem("count", count);
     localStorage.setItem("completed", completed);
     localStorage.setItem("innerList", list.innerHTML);
     list = document.getElementById("list");
-
 }
 
+//ADD TO-DO
 function addToDo(fromLoaded) {
-    if(!fromLoaded) {
+    if (!fromLoaded) {
         checkOrNot = false;
     }
 
@@ -130,22 +134,20 @@ function addToDo(fromLoaded) {
     // append checkbox
     var checkbox = document.createElement('input');
     checkbox.type = "checkbox";
-    checkbox.className= "checkbox";
+    checkbox.className = "checkbox";
     console.log(checkbox.className);
+    //restore checkbox state from localStorage
     if (checkOrNot) {
-        console.log("okay?");   
+        console.log("okay?");
         checkbox.checked = true;
         completed++;
         newItem.style.textDecoration = "line-through";
         checkbox.classList.add("checked");
-    }
-    else {
+    } else {
         checkbox.classList.remove("checked");
     }
     updateStats(percentText, percentBar, percentBarFill);
-
     newItem.appendChild(checkbox);
-
 
     // handle clicks on checkbox
     checkbox.onclick = function () {
@@ -163,13 +165,11 @@ function addToDo(fromLoaded) {
         updateStats(percentText, percentBar, percentBarFill);
     }
 
-
     //append para
     var para = document.createElement('p');
     para.classList.add("para");
     para.innerHTML = inputText.value;
     newItem.appendChild(para);
-
 
     //append delete button
     var deleteButton = document.createElement('img');
@@ -177,7 +177,6 @@ function addToDo(fromLoaded) {
     deleteButton.src = "img/delete.png";
     deleteButton.style.visibility = "hidden";
     newItem.appendChild(deleteButton);
-
 
     //handle clicks on the delete button
     deleteButton.onclick = function () {
@@ -203,10 +202,8 @@ function addToDo(fromLoaded) {
         updateStats(percentText, percentBar, percentBarFill);
     }
 
-
     //append the to-do to the list
     list.appendChild(newItem);
-
 
     //handle hover over to-do
     newItem.onmouseover = function () {
@@ -215,12 +212,6 @@ function addToDo(fromLoaded) {
     newItem.onmouseout = function () {
         deleteButton.style.visibility = "hidden";
     }
-    // newItem.addEventListener("mouseover", whenMouseOver);
-
-    // function whenMouseOver(event) {
-    //     deleteButton.style.visibility = "visible";
-    // }
-
 
     //update stats UI, etc
     count++;
