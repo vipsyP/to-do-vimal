@@ -6,11 +6,13 @@ var percentBar;
 var percentBarFill;
 var list;
 var inputText;
+var checkOrNot;
 
 
 function initialize() {
     count = 0;
     completed = 0;
+    checkOrNot = false;
     percentText = document.getElementById("percent-text");
     percentBar = document.getElementById("percent-bar");
     percentBarFill = document.getElementById("percent-bar-fill");
@@ -32,7 +34,7 @@ function keyUp(event) {
     event.preventDefault();
 
     inputText = document.getElementById("input-text");
-    //return if edit text contains only whitespaces 
+    //return if edit text contains only whitespaces
     if (inputText.value.trim() == "") {
         inputText.value = "";
         return;
@@ -54,11 +56,11 @@ function loaded() {
     tempCompleted = Number(tempCompleted);
 
     //console.log("1: "+localStorage.getItem("innerList"));
-    if ((innerList = localStorage.getItem("innerList")) == null){
+    if ((innerList = localStorage.getItem("innerList")) == null) {
         innerList = "";
         return;
     }
-    if (innerList.trim() == ""){
+    if (innerList.trim() == "") {
         return;
     }
     //console.log("2 "+innerList);
@@ -67,20 +69,30 @@ function loaded() {
     var body = document.getElementById("body");
     body.appendChild(tempList);
     tempList.innerHTML = innerList;
-    console.log(tempList.innerHTML);
-    
+    //console.log(tempList.innerHTML);
+
     var i = 0;
     var listOffspring = tempList.firstChild;
-    console.log("check?");
 
-    console.log(listOffspring.innerHTML);
-    while (i<tempCount) {
-        inputText.value = listOffspring.getElementsByClassName("para")[0].innerHTML; 
-        //console.log(inputText.value); 
-        console.log(i);
-        addToDo();
+    //console.log(listOffspring.innerHTML);
+    while (i < tempCount) {
+        inputText.value = listOffspring.getElementsByClassName("para")[0].innerHTML;
+
+        //console.log(i +" : "+ listOffspring.getElementsByTagName("input")[0].className);
+
+        if (listOffspring.getElementsByTagName("input")[0].className == null) {
+            listOffspring.getElementsByTagName("input")[0].className = "checkbox";
+        }
+        if (listOffspring.getElementsByTagName("input")[0].className == "checkbox checked") {
+            checkOrNot = true;
+        }
+         else {
+            checkOrNot = false;
+        }
+        console.log(checkOrNot);
+        addToDo(true);
         listOffspring = listOffspring.nextSibling;
-        i = i+1;
+        i = i + 1;
     }
 
     body.removeChild(tempList);
@@ -93,16 +105,17 @@ function loaded() {
 
 function unloading() {
 
-  localStorage.setItem("count", count);
-  localStorage.setItem("completed", completed);
-  localStorage.setItem("innerList", list.innerHTML);
-  list = document.getElementById("list");
-
+    localStorage.setItem("count", count);
+    localStorage.setItem("completed", completed);
+    localStorage.setItem("innerList", list.innerHTML);
+    list = document.getElementById("list");
 
 }
 
-function addToDo() {
-
+function addToDo(fromLoaded) {
+    if(!fromLoaded) {
+        checkOrNot = false;
+    }
 
     //return if task is empty
     if (inputText.value == "") {
@@ -117,12 +130,26 @@ function addToDo() {
     // append checkbox
     var checkbox = document.createElement('input');
     checkbox.type = "checkbox";
-    checkbox.classList.add("checkbox");
+    checkbox.className= "checkbox";
+    console.log(checkbox.className);
+    if (checkOrNot) {
+        console.log("okay?");   
+        checkbox.checked = true;
+        completed++;
+        newItem.style.textDecoration = "line-through";
+        checkbox.classList.add("checked");
+    }
+    else {
+        checkbox.classList.remove("checked");
+    }
+    updateStats(percentText, percentBar, percentBarFill);
+
     newItem.appendChild(checkbox);
 
 
     // handle clicks on checkbox
     checkbox.onclick = function () {
+        //console.log("hahaha: "+checkbox.className);
         if (checkbox.checked == true) {
             completed++;
             newItem.style.textDecoration = "line-through";
@@ -181,13 +208,13 @@ function addToDo() {
     list.appendChild(newItem);
 
 
-     //handle hover over to-do 
-     newItem.onmouseover = function () {
-         deleteButton.style.visibility = "visible";
-     }
-     newItem.onmouseout = function () {
-         deleteButton.style.visibility = "hidden";
-     }
+    //handle hover over to-do
+    newItem.onmouseover = function () {
+        deleteButton.style.visibility = "visible";
+    }
+    newItem.onmouseout = function () {
+        deleteButton.style.visibility = "hidden";
+    }
     // newItem.addEventListener("mouseover", whenMouseOver);
 
     // function whenMouseOver(event) {
