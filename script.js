@@ -10,6 +10,7 @@ var inputText;
 
 var checkOrNot;
 
+var source;
 
 function initialize() {
     count = 0;
@@ -107,12 +108,14 @@ function loaded() {
 }
 
 // WHEN THE USER CLOSES THE PAGE OR RELOADS
-function unloading() {
+function unloading1() {
     //store count, completed, & list to localStorage
     localStorage.setItem("count", count);
     localStorage.setItem("completed", completed);
     localStorage.setItem("innerList", list.innerHTML);
     list = document.getElementById("list");
+}
+function unloading() {
 }
 
 //ADD TO-DO
@@ -212,6 +215,32 @@ function addToDo(fromLoaded) {
     newItem.onmouseout = function () {
         deleteButton.style.visibility = "hidden";
     }
+
+    //To make an element draggable
+    newItem.draggable = "true";
+
+    // sets the data type and the value of the dragged data.
+    newItem.ondragstart = function (e){
+        source = e.target;
+    }
+
+    // By default, data/elements cannot be dropped in other elements. 
+    // To allow a drop, we must prevent the default handling of the element.
+    newItem.ondragover = function (e){
+        e.preventDefault();
+
+    }
+
+    newItem.ondrop = function(e) {
+        e.preventDefault();
+        var temp = source.innerHTML;
+
+        console.log("1: "+source.innerHTML);
+        console.log("2: "+e.target.innerHTML);
+        source.innerHTML = e.target.innerHTML;
+        e.target.innerHTML= temp;
+    }
+
 
     //update stats UI, etc
     count++;

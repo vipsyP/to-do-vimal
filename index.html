@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,12 +9,10 @@
     <title>To Do</title>
 </head>
 
-
-<body onLoad = "loaded()" onbeforeunload="unloading()" id= "body">
+<body onLoad="loaded()" onbeforeunload="unloading()" id="body">
 
     <!-- CONTAINER -->
     <section class="outermost-container">
-
 
         <!-- ICON & HEADING -->
         <div class="heading-container">
@@ -24,7 +21,6 @@
             <h4 class="heading">Checklist</h4>
 
         </div>
-
 
         <!-- Stats UI -->
         <div class="stats-container">
@@ -37,17 +33,14 @@
             </div>
 
         </div>
-        <!-- <hr> -->
 
         <!-- TO DO LIST -->
         <div class="list" id="list"></div>
 
-
         <!-- EDIT TEXT -->
-        <textarea onkeyup = "keyUp(event)" rows="1" placeholder="Add an item..." class="input-text" id="input-text" name="task"></textarea>
+        <textarea onkeyup="keyUp(event)" rows="1" placeholder="Add an item..." class="input-text" id="input-text" name="task"></textarea>
         <!-- BUTTON -->
         <button class="add" id="add" onclick="addToDo(false)">Add</button>
-
 
     </section>
 </body>
