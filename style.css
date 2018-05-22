@@ -45,6 +45,18 @@ body {
     color: #333;
 }
 
+.clear {
+    margin:0;
+    padding:0;
+    padding-top: 20px;
+    font-size: 12px;
+    margin-left: 280px;
+    color: #838c91;
+    text-decoration: underline;
+    cursor: pointer;
+
+}
+
 /*SECOND CONTAINER*/
 
 .stats-container {

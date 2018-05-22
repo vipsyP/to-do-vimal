@@ -23,12 +23,26 @@ function initialize() {
     inputText = document.getElementById("input-text");
 }
 
+function clearStorage() {
+    
+    count = 0;
+    completed = 0;
+    updateStats(percentText, percentBar, percentBarFill);
+    list.innerHTML = "";
+}
+
 // UPDATE STATS UI-- PERCENT TEXT, BAR, & FILL
 function updateStats(percentText, percentBar, percentBarFill) {
     var progressBarWidth = getComputedStyle(percentBar).getPropertyValue("width");
     progressBarWidth = progressBarWidth.slice(0, progressBarWidth.length - 2);
+    if(count == 0) {
+        percentBarFill.style.width = "0px";
+        percentText.innerHTML = "0%";
+    }
+    else {
     percentBarFill.style.width = "" + Math.round(completed / count * progressBarWidth) + "px";
     percentText.innerHTML = Math.round(completed / count * 100) + "%";
+    }
 }
 
 //CAPTURE ENTER KEY UP 
@@ -45,6 +59,7 @@ function keyUp(event) {
         document.getElementById("add").click();
     }
 }
+
 
 // WHEN THE DOCUMENT LOADS
 function loaded() {
@@ -108,14 +123,14 @@ function loaded() {
 }
 
 // WHEN THE USER CLOSES THE PAGE OR RELOADS
-function unloading1() {
+function unloading() {
     //store count, completed, & list to localStorage
     localStorage.setItem("count", count);
     localStorage.setItem("completed", completed);
     localStorage.setItem("innerList", list.innerHTML);
     list = document.getElementById("list");
 }
-function unloading() {
+function unloading1() {
 }
 
 //ADD TO-DO
@@ -239,6 +254,10 @@ function addToDo(fromLoaded) {
         console.log("2: "+e.target.innerHTML);
         source.innerHTML = e.target.innerHTML;
         e.target.innerHTML= temp;
+
+        unloading();
+        list.innerHTML = "";
+        loaded();
     }
 
 
