@@ -43,10 +43,13 @@ function updateStatsUI() {
 
 function clearToDoList() {
     toDoList.text("");
+    updateStatsUI();
 }
 
 function load() {
     initialize();
+    $( "#to-do-list" ).sortable();
+    $( "#to-do-list" ).disableSelection();
 
     let items = JSON.parse(localStorage.getItem('items'));
     if (items == null) {
