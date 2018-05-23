@@ -6,12 +6,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <script type="text/javascript" src="script.js"></script>
     <title>To Do</title>
 </head>
 
 
-<body onLoad = "loaded()">
+<body onLoad="loaded()">
 
     <!-- CONTAINER -->
     <section class="outermost-container">
@@ -44,11 +43,13 @@
 
 
         <!-- EDIT TEXT -->
-        <textarea onkeyup = "keyUp(event)" rows="1" placeholder="Add an item..." class="input-text" id="input-text" name="task"></textarea>
+        <textarea onkeyup="keyUp(event)" rows="1" placeholder="Add an item..." class="input-text" id="input-text" name="task"></textarea>
         <!-- BUTTON -->
         <button class="add" id="add" onclick="addToDo()">Add</button>
 
-
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+        <script type="text/javascript" src="script.js"></script>
     </section>
 </body>
 
