@@ -24,7 +24,7 @@ function initialize() {
 }
 
 function clearStorage() {
-    
+
     count = 0;
     completed = 0;
     updateStats(percentText, percentBar, percentBarFill);
@@ -35,13 +35,12 @@ function clearStorage() {
 function updateStats(percentText, percentBar, percentBarFill) {
     var progressBarWidth = getComputedStyle(percentBar).getPropertyValue("width");
     progressBarWidth = progressBarWidth.slice(0, progressBarWidth.length - 2);
-    if(count == 0) {
+    if (count == 0) {
         percentBarFill.style.width = "0px";
         percentText.innerHTML = "0%";
-    }
-    else {
-    percentBarFill.style.width = "" + Math.round(completed / count * progressBarWidth) + "px";
-    percentText.innerHTML = Math.round(completed / count * 100) + "%";
+    } else {
+        percentBarFill.style.width = "" + Math.round(completed / count * progressBarWidth) + "px";
+        percentText.innerHTML = Math.round(completed / count * 100) + "%";
     }
 }
 
@@ -85,7 +84,7 @@ function loaded() {
     }
 
     //create a temporary list--for iterating on to-do items from localStorage
-    var tempList = document.createElement('div');
+    var tempList = document.createElement('li');
 
     //attach temporary list to body--temporarily of course 
     var body = document.getElementById("body");
@@ -96,7 +95,7 @@ function loaded() {
     var i = 0;
     var listOffspring = tempList.firstChild;
     while (i < tempCount) {
-
+        console.log();
         //store to-do text
         inputText.value = listOffspring.getElementsByClassName("para")[0].innerHTML;
 
@@ -106,8 +105,7 @@ function loaded() {
         }
         if (listOffspring.getElementsByTagName("input")[0].className == "checkbox checked") {
             checkOrNot = true;
-        } 
-        else {
+        } else {
             checkOrNot = false;
         }
 
@@ -130,11 +128,10 @@ function unloading() {
     localStorage.setItem("innerList", list.innerHTML);
     list = document.getElementById("list");
 }
-function unloading1() {
-}
 
 //ADD TO-DO
 function addToDo(fromLoaded) {
+    console.log('add function called!');
     if (!fromLoaded) {
         checkOrNot = false;
     }
@@ -145,7 +142,7 @@ function addToDo(fromLoaded) {
     }
 
     //create container for checkbox, para
-    var newItem = document.createElement('div');
+    var newItem = document.createElement('li');
     newItem.classList.add("new-item");
 
 
@@ -153,10 +150,10 @@ function addToDo(fromLoaded) {
     var checkbox = document.createElement('input');
     checkbox.type = "checkbox";
     checkbox.className = "checkbox";
-    console.log(checkbox.className);
+    //console.log(checkbox.className);
     //restore checkbox state from localStorage
     if (checkOrNot) {
-        console.log("okay?");
+        //console.log("okay?");
         checkbox.checked = true;
         completed++;
         newItem.style.textDecoration = "line-through";
@@ -170,6 +167,7 @@ function addToDo(fromLoaded) {
     // handle clicks on checkbox
     checkbox.onclick = function () {
         //console.log("hahaha: "+checkbox.className);
+        console.log('checkbox clicked!');
         if (checkbox.checked == true) {
             completed++;
             newItem.style.textDecoration = "line-through";
@@ -198,6 +196,7 @@ function addToDo(fromLoaded) {
 
     //handle clicks on the delete button
     deleteButton.onclick = function () {
+        console.log('delete button clicked!');
         if (checkbox.checked == true) {
             completed--;
         }
@@ -206,12 +205,12 @@ function addToDo(fromLoaded) {
         var i = 0;
         while ((listChild = listChild.previousSibling) != null)
             i++;
-        console.log("Index of deleted item: " + i);
+        //console.log("Index of deleted item: " + i);
         list.removeChild(list.childNodes[i]);
 
         count--;
         if (count == 0) {
-            console.log("No more to-do's");
+            //console.log("No more to-do's");
             percentBarFill.style.width = "0px";
             percentText.innerHTML = "0%";
             return;
@@ -225,9 +224,11 @@ function addToDo(fromLoaded) {
 
     //handle hover over to-do
     newItem.onmouseover = function () {
+        // console.log('mouse over!');
         deleteButton.style.visibility = "visible";
     }
     newItem.onmouseout = function () {
+        // console.log('mouse out!');
         deleteButton.style.visibility = "hidden";
     }
 
@@ -235,25 +236,39 @@ function addToDo(fromLoaded) {
     newItem.draggable = "true";
 
     // sets the data type and the value of the dragged data.
-    newItem.ondragstart = function (e){
+    newItem.ondragstart = function (e) {
+        console.log('drag start!');
         source = e.target;
+        console.log(source);
     }
 
     // By default, data/elements cannot be dropped in other elements. 
     // To allow a drop, we must prevent the default handling of the element.
-    newItem.ondragover = function (e){
+    newItem.ondragover = function (e) {
+        console.log('drag over!');
         e.preventDefault();
 
     }
 
-    newItem.ondrop = function(e) {
-        e.preventDefault();
+    newItem.ondrop = function (e) {
         var temp = source.innerHTML;
-
-        console.log("1: "+source.innerHTML);
-        console.log("2: "+e.target.innerHTML);
-        source.innerHTML = e.target.innerHTML;
-        e.target.innerHTML= temp;
+        console.log(e);
+        console.log('drop!');
+        //console.log("1: "+source.innerHTML);
+        //console.log("2: "+e.target.innerHTML);
+        console.log("Type of :" + typeof e.target);
+        console.log("Target :" + e.target);
+        console.log("Target toString :" + e.target.toString());
+        if (e.target.toString() != "[object HTMLLIElement]") {
+            source.innerHTML = e.target.parentElement.innerHTML;
+            console.log("Type of source:" + typeof source);
+            console.log("Target of source:" + source);
+            console.log("Target of source toString :" + source.toString());
+            e.target.parentElement.innerHTML = temp;
+        } else {
+            source.innerHTML = e.target.innerHTML;
+            e.target.innerHTML = temp;
+        }
 
         unloading();
         list.innerHTML = "";

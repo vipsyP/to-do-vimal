@@ -5,11 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <script type="text/javascript" src="script.js"></script>
     <title>To Do</title>
 </head>
 
 <body onLoad="loaded()" onbeforeunload="unloading()" id="body">
+
+
 
     <!-- CONTAINER -->
     <section class="outermost-container">
@@ -19,7 +20,7 @@
 
             <img src="img/checkbox.png" alt="Checkbox icon" class="icon" id="icon">
             <h4 class="heading">Checklist</h4>
-            <p class="clear" onclick = "clearStorage()">clear</p>
+            <p class="clear" onclick="clearStorage()">clear</p>
 
         </div>
 
@@ -36,7 +37,7 @@
         </div>
 
         <!-- TO DO LIST -->
-        <div class="list" id="list"></div>
+        <ul class="list" id="list"></ul>
 
         <!-- EDIT TEXT -->
         <textarea onkeyup="keyUp(event)" rows="1" placeholder="Add an item..." class="input-text" id="input-text" name="task"></textarea>
@@ -44,6 +45,10 @@
         <button class="add" id="add" onclick="addToDo(false)">Add</button>
 
     </section>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <script type="text/javascript" src="script.js"></script>
 </body>
 
 </html>
