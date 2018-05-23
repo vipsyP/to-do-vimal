@@ -8,7 +8,7 @@
     <title>To Do</title>
 </head>
 
-<body onLoad="loaded()" onbeforeunload="unloading()" id="body">
+<body onLoad="load()" onbeforeunload="unload()" id="body">
 
     <!-- CONTAINER -->
     <section class="outermost-container">
@@ -35,18 +35,18 @@
         </div>
 
         <!-- TO DO LIST -->
-        <ul class="list" id="list"></ul>
+        <ul class="to-do-list" id="to-do-list"></ul>
 
         <!-- EDIT TEXT -->
         <textarea onkeyup="keyUp(event)" rows="1" placeholder="Add an item..." class="input-text" id="input-text" name="task"></textarea>
         <!-- BUTTON -->
-        <button class="add" id="add" onclick="addToDo(false)">Add</button>
+        <button class="add" id="add" onclick="addToDo()">Add</button>
 
     </section>
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous"></script>
-    <script type="text/javascript" src="script.js"></script>
+    <script type="text/javascript" src="app.js"></script>
 
 </body>
 
