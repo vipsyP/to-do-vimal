@@ -11,6 +11,7 @@ var inputText;
 var checkOrNot;
 
 var source;
+var destination;
 
 function initialize() {
     count = 0;
@@ -24,7 +25,7 @@ function initialize() {
 }
 
 function clearStorage() {
-
+    console.log("clear local storage");
     count = 0;
     completed = 0;
     updateStats(percentText, percentBar, percentBarFill);
@@ -95,7 +96,6 @@ function loaded() {
     var i = 0;
     var listOffspring = tempList.firstChild;
     while (i < tempCount) {
-        console.log();
         //store to-do text
         inputText.value = listOffspring.getElementsByClassName("para")[0].innerHTML;
 
@@ -150,10 +150,8 @@ function addToDo(fromLoaded) {
     var checkbox = document.createElement('input');
     checkbox.type = "checkbox";
     checkbox.className = "checkbox";
-    //console.log(checkbox.className);
     //restore checkbox state from localStorage
     if (checkOrNot) {
-        //console.log("okay?");
         checkbox.checked = true;
         completed++;
         newItem.style.textDecoration = "line-through";
@@ -166,7 +164,6 @@ function addToDo(fromLoaded) {
 
     // handle clicks on checkbox
     checkbox.onclick = function () {
-        //console.log("hahaha: "+checkbox.className);
         console.log('checkbox clicked!');
         if (checkbox.checked == true) {
             completed++;
@@ -201,16 +198,16 @@ function addToDo(fromLoaded) {
             completed--;
         }
 
+        // find index of item to be deleted
         var listChild = newItem;
         var i = 0;
         while ((listChild = listChild.previousSibling) != null)
             i++;
-        //console.log("Index of deleted item: " + i);
         list.removeChild(list.childNodes[i]);
 
         count--;
+        // if there are no to-do's, display 0% instead of NaN%
         if (count == 0) {
-            //console.log("No more to-do's");
             percentBarFill.style.width = "0px";
             percentText.innerHTML = "0%";
             return;
@@ -239,7 +236,6 @@ function addToDo(fromLoaded) {
     newItem.ondragstart = function (e) {
         console.log('drag start!');
         source = e.target;
-        console.log(source);
     }
 
     // By default, data/elements cannot be dropped in other elements. 
@@ -251,30 +247,32 @@ function addToDo(fromLoaded) {
     }
 
     newItem.ondrop = function (e) {
+        destination = e.target;
         var temp = source.innerHTML;
-        console.log(e);
         console.log('drop!');
-        //console.log("1: "+source.innerHTML);
-        //console.log("2: "+e.target.innerHTML);
-        console.log("Type of :" + typeof e.target);
-        console.log("Target :" + e.target);
-        console.log("Target toString :" + e.target.toString());
-        if (e.target.toString() != "[object HTMLLIElement]") {
-            source.innerHTML = e.target.parentElement.innerHTML;
-            console.log("Type of source:" + typeof source);
-            console.log("Target of source:" + source);
-            console.log("Target of source toString :" + source.toString());
-            e.target.parentElement.innerHTML = temp;
+
+        if ("" + e.target != "[object HTMLLIElement]") {
+
+            // console.log("1. Source: " + source + " : " + source.innerHTML);
+            // console.log("1. Destination parentElement: " + destination.parentElement + " : " + destination.parentElement.innerHTML);
+
+            source.innerHTML = destination.parentElement.innerHTML;
+
+            // console.log("2. Source: " + source + " : " + source.innerHTML);
+            // console.log("2. Destination parentElement: " + destination.parentElement + " : " + destination.parentElement.innerHTML);
+
+            if (destination.parentElement != null) {
+                destination.parentElement.innerHTML = temp;
+            }
         } else {
-            source.innerHTML = e.target.innerHTML;
-            e.target.innerHTML = temp;
+            source.innerHTML = destination.innerHTML;
+            destination.innerHTML = temp;
         }
 
         unloading();
         list.innerHTML = "";
         loaded();
     }
-
 
     //update stats UI, etc
     count++;
