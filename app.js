@@ -1,9 +1,13 @@
+var count;
+var completed;
 var percentText;
 var percentBar;
 var percentBarFill;
 var toDoList;
 var inputText;
 
+
+// Get references to HTML elements - stats UI, to do list, input text
 function initialize() {
     percentText = $("#percent-text");
     percentBar = $("#percent-bar");
@@ -12,74 +16,87 @@ function initialize() {
     inputText = $("#input-text");
 }
 
-function updateStatsUI() {
-    var count = 0;
-    var completed = 0;
-    $.each($('.new-item'), function(index, toDoItem){
+
+// Count number of to do items 
+// & number of completed to do items
+function countItems() {
+    count = 0;
+    completed = 0;
+    $.each($('.new-item'), function (index, toDoItem) {
         count++;
-        if(toDoItem.firstChild.checked)
-        completed++;
+        if (toDoItem.firstChild.checked)
+            completed++;
 
     });
-    console.log("count"+count);
-    console.log("completed"+completed);
-    // var progressBarWidth = getComputedStyle(percentBar).getPropertyValue("width");
+}
+
+
+// Update stats UI - percent text, percent bar
+function updateStatsUI() {
+    countItems();
     var progressBarWidth = percentBar.css('width');
     progressBarWidth = Number(progressBarWidth.slice(0, progressBarWidth.length - 2));
     if (count == 0) {
-        // percentBarFill.style.width = "0px";
         percentBarFill.css('width', '0px')
         console.log(percentBarFill.css('width'));
         console.log(percentBarFill);
-        // percentText.innerHTML = "0%";
         percentText.text('0%');
     } else {
-        // percentBarFill.style.width = "" + Math.round(completed / count * progressBarWidth) + "px";
         percentBarFill.css('width', '' + Math.round(completed / count * progressBarWidth) + 'px')
-        // percentText.innerHTML = Math.round(completed / count * 100) + "%";
         percentText.text('' + Math.round(completed / count * 100) + '%');
     }
 }
 
+
+// Empty list
 function clearToDoList() {
     toDoList.text("");
     updateStatsUI();
 }
 
+// Make to-do items 'drag-&-drop'able
+function allowDragNDrop() {
+    $("#to-do-list").sortable();
+    $("#to-do-list").disableSelection();
+}
+
+
+// Get to-do items—stored as array of objects—from localStorage 
+// Dynamically create to-do items & populate the to-do list 
 function load() {
     initialize();
-    $( "#to-do-list" ).sortable();
-    $( "#to-do-list" ).disableSelection();
+    allowDragNDrop();
 
     let items = JSON.parse(localStorage.getItem('items'));
     if (items == null) {
         return false;
     }
-
     $.each(items, function (index, value) {
-        // console.log(index,value);
         addToDo(value.toDoText, value.isChecked);
     });
     updateStatsUI();
 }
 
+
+// Store to-do items as array of objects inside localStorage
 function unload() {
     let toDoItems = [];
-    $.each($('.new-item'), function(index, toDoItem){
+    $.each($('.new-item'), function (index, toDoItem) {
         let isChecked = toDoItem.firstChild.checked;
         let toDoText = toDoItem.firstChild.nextSibling.innerText;
         let obj = {
-            isChecked : isChecked,
-            toDoText : toDoText
+            isChecked: isChecked,
+            toDoText: toDoText
         }
         toDoItems.push(obj);
     });
-    
-    localStorage.setItem('items',JSON.stringify(toDoItems));
+    localStorage.setItem('items', JSON.stringify(toDoItems));
 }
 
+
+// Create a to-do item—consisting of a checkbox, a para & a delete button—& append to the to-do list
+// Provide appropriate event listeners
 function addToDo(toDoText = $('#input-text').val(), isChecked) {
-    // console.log(isChecked + " : " + toDoText);
 
     //checkbox
     let toDoCheck = $(`<input type = "checkbox"></input>`);
@@ -94,11 +111,18 @@ function addToDo(toDoText = $('#input-text').val(), isChecked) {
     //delete button
     let toDoDeleteImg = $(`<img src = "img/delete.png"/>`);
     toDoDeleteImg.addClass('delete-button').css('visibility', 'visible');
+    toDoDeleteImg.css('visibility', 'hidden');
     toDoDeleteImg.on('click', deleteToDo);
 
-    //to do item
+    //to-do item
     let toDoListItem = $('<li></li>').append(toDoCheck).append(toDoPara).append(toDoDeleteImg);
     toDoListItem.addClass('new-item');
+    toDoListItem.on('mouseenter', function () {
+        toDoDeleteImg.css('visibility', 'visible')
+    });
+    toDoListItem.on('mouseleave', function () {
+        toDoDeleteImg.css('visibility', 'hidden')
+    });
     toDoList.append(toDoListItem);
 
     //reset value of input text & bring back focus
@@ -108,16 +132,17 @@ function addToDo(toDoText = $('#input-text').val(), isChecked) {
     updateStatsUI();
 }
 
+
+// Delete to-do item
 function deleteToDo(event) {
     $(event.target.parentElement).remove();
-
     updateStatsUI();
 }
 
 
+//capture enter key released
 function keyUp(event) {
     event.preventDefault();
-
     //return if edit text contains only whitespaces
     if (inputText.val().trim() == "") {
         inputText.val('');
