@@ -6,86 +6,90 @@ var bodyParser = require('body-parser');
 const fs = require('fs');
 let path = require('path');
 
-// Init App
+// init App
 const app = express()
 
-// Bring in models
-let ToDo = require('./models/toDo');
+// bring in models
+let ToDoModel = require('./models/toDo');
 let db = mongoose.connection;
 
-//check for db errors
+
+// check for db errors
 db.on('error', console.error.bind(console, 'connection error'));
 
-//check connection
+
+// check connection
 db.once('open', function () {
     //connected
     console.log('Connected to MongoDB')
 });
 
-app.use((req, res, next) => {
-    //console.log("Logged!")
-    next()
-})
 
+// project directory
 app.use(express.static(__dirname + '/public'));
+
 
 app.use(bodyParser.json());
 
-// Home route
+
+// home route
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname + 'index.html'));
-    //  console.log("hey: "+toDos.find());
-    //  res.send("Hey: "+toDos.);
 });
 
+
+// find all documents in db  
 app.get("/api/retrieve", (req, res) => {
-    ToDo.find({}, {}, function (err, toDos) {
+    ToDoModel.find({}, {}, function (err, toDos) {
         if (err) {
-            console.log(err);
+            console.log("retrieve error: " + err);
         } else {
             res.send(toDos);
-            console.log("Items retrieved to server file: " + toDos);
+            console.log("retrieved all documents");
         }
     });
 });
 
+
+// delete selected document
 app.put("/api/delete", (req, res) => {
     var conditions = {
         "toDoText": req.body.toDoText.trim()
     };
-    console.log("The miracle 2.0 |"+req.body.toDoText.trim()+"|");
-    ToDo.deleteOne(conditions, function (err) {
+    ToDoModel.deleteOne(conditions, function (err) {
         if (err) {
             return handleError(err);
-            console.log('delete error');
+            console.log('delete error: ' + err);
         };
-        console.log("Deleted one");
+        console.log("deleted one document");
     });
 });
 
+
+// delete all documents
 app.get("/api/clear", (req, res) => {
-    ToDo.deleteMany({}, function (err) {
+    ToDoModel.deleteMany({}, function (err) {
         if (err) {
             return handleError(err);
-            console.log('clear error');
+            console.log('clear error: ' + err);
         };
-        console.log("Deleted all");
+        console.log("cleared all documents");
     });
 });
 
-app.post("/api/insert", (req, res) => {
-    //create document
-    console.log("The request check: " + req.body.doneCheck);
-    console.log("The request text: " + req.body.toDoText);
 
-    var toDo = new ToDo(req.body);
+// insert document
+app.post("/api/insert", (req, res) => {
+
+    var toDo = new ToDoModel(req.body);
     toDo.save();
     //append toDo to response
-    res.send("Check: " + toDo.doneCheck + "Text: " + toDo.toDoText);
+    // res.send("Check: " + toDo.doneCheck + "Text: " + toDo.toDoText);
 });
 
-app.put("/api/update-checked", function(req, res) {
-    //create document
+
+// update document
+app.put("/api/update-checked", function (req, res) {
 
     var conditions = {
         "toDoText": req.body.toDoText.trim()
@@ -95,19 +99,14 @@ app.put("/api/update-checked", function(req, res) {
             "doneCheck": req.body.doneCheck
         }
     };
-    // var options = {
-    //     multi: false
-    // };
-
-    console.log("update-checked check: " + req.body.doneCheck);
-    console.log("update-checked text: " + req.body.toDoText);
-
-    ToDo.updateOne(conditions, update, function (err, toDo) {
+    ToDoModel.updateOne(conditions, update, function (err, toDo) {
         if (err) {
-            console.log(err);
+            console.log('update error: ' + err);
         } else {
-            console.log("update-checked" + toDo);
+            console.log("updated one document");
         }
     });
 });
+
+
 app.listen(3000, 'localhost', () => console.log("listening on port 3000"));

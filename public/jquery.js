@@ -46,7 +46,7 @@ function updateStatsUI() {
 }
 
 
-// Empty list
+// Empty list--request server to delete all documents
 function clearToDoList() {
     toDoList.text("");
     updateStatsUI();
@@ -66,7 +66,7 @@ function allowDragNDrop() {
 }
 
 
-// Restore to-do items  
+// Restore to-do items when page loads--request server to return all documents  
 function load() {
 
     initialize();
@@ -81,64 +81,16 @@ function load() {
                 return false;
             }
             $.each(items, function (index, value) {
-                addToDo(value.toDoText, value.doneCheck);
+                renderToDo(value.toDoText, value.doneCheck);
             });
             console.log("Get: ", items);
         }
     })
     updateStatsUI();
-
-    // initialize();
-    // allowDragNDrop();
-
-    // let items = JSON.parse(localStorage.getItem('items'));
-    // if (items == null) {
-    //     return false;
-    // }
-    // $.each(items, function (index, value) {
-    //     addToDo(value.toDoText, value.isChecked);
-    // });
-    // updateStatsUI();
 }
 
-
-// Store to-do items
-function unload() {
-
-    // $.each($('.new-item'), function (index, toDoItem) {
-
-    //     let data = {
-    //         "doneCheck": toDoItem.firstChild.checked,
-    //         "toDoText": toDoItem.firstChild.nextSibling.innerText
-    //     };
-    //     //console.log("doneCheck: " + toDoItem.firstChild.checked);
-    //     //console.log("toDoText: " + toDoItem.firstChild.nextSibling.innerText);
-    //     $.ajax({
-    //         type: 'POST',
-    //         data: JSON.stringify(data),
-    //         contentType: 'application/json',
-    //         url: 'http://localhost:3000/api/insert'
-    //     });
-    //     console.log('Post: '+data);
-    // });
-
-
-
-    // let toDoItems = [];
-    // $.each($('.new-item'), function (index, toDoItem) {
-    //     let isChecked = toDoItem.firstChild.checked;
-    //     let toDoText = toDoItem.firstChild.nextSibling.innerText;
-    //     let obj = {
-    //         isChecked: isChecked,
-    //         toDoText: toDoText
-    //     }
-    //     toDoItems.push(obj);
-    // });
-    // localStorage.setItem('items', JSON.stringify(toDoItems));
-}
-
-
-function addToDoAndPost(toDoText = $('#input-text').val(), isChecked) {
+// Add to-do items--request server to insert a document 
+function addToDo(toDoText = $('#input-text').val(), isChecked) {
     if (isChecked == undefined)
         isChecked = false;
 
@@ -146,8 +98,7 @@ function addToDoAndPost(toDoText = $('#input-text').val(), isChecked) {
         "doneCheck": isChecked,
         "toDoText": toDoText.trim()
     };
-    //console.log("doneCheck: " + toDoItem.firstChild.checked);
-    //console.log("toDoText: " + toDoItem.firstChild.nextSibling.innerText);
+    
     $.ajax({
         type: 'POST',
         data: JSON.stringify(data),
@@ -156,13 +107,13 @@ function addToDoAndPost(toDoText = $('#input-text').val(), isChecked) {
     });
     console.log('Post: ' + data);
 
-    addToDo(toDoText, isChecked)
+    renderToDo(toDoText, isChecked)
 }
 
 
 // Create a to-do item—consisting of a checkbox, a para & a delete button—& append to the to-do list
 // Provide appropriate event listeners
-function addToDo(toDoText = $('#input-text').val(), isChecked) {
+function renderToDo(toDoText = $('#input-text').val(), isChecked) {
 
     console.log('add function toDoText: ' + toDoText);
     console.log('add function isChecked: ' + isChecked);
@@ -206,7 +157,7 @@ function addToDo(toDoText = $('#input-text').val(), isChecked) {
 }
 
 
-// Delete to-do item
+// Delete to-do item--request server to delete a document 
 function deleteToDo(event) {
     $(event.target.parentElement).remove();
     updateStatsUI();
@@ -215,7 +166,7 @@ function deleteToDo(event) {
         "doneCheck": event.target.checked,
         "toDoText": event.target.parentElement.firstChild.nextSibling.innerText
     };
-    console.log("The miracle: |"+event.target.parentElement.firstChild.nextSibling.innerText+"|");
+    console.log("The miracle: |" + event.target.parentElement.firstChild.nextSibling.innerText + "|");
     $.ajax({
         type: 'PUT',
         data: JSON.stringify(data),
@@ -225,7 +176,7 @@ function deleteToDo(event) {
 }
 
 
-// Update checked
+// Update checked--request server to update a document 
 function updateChecked(event) {
 
     updateStatsUI();
@@ -253,6 +204,6 @@ function keyUp(event) {
         return;
     }
     if (event.key === 'Enter') {
-        addToDoAndPost();
+        addToDo();
     }
 }

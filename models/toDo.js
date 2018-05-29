@@ -1,6 +1,6 @@
 let mongoose = require('mongoose');
 
-//Article Schema
+//Schema
 let toDoItemSchema = mongoose.Schema({
     doneCheck: {
         type: Boolean,
@@ -13,4 +13,6 @@ let toDoItemSchema = mongoose.Schema({
     },
 
 });
+
+//Model
 module.exports = mongoose.model('ToDoItem', toDoItemSchema, 'todoitems');
