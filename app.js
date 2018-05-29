@@ -1,154 +1,113 @@
-var count;
-var completed;
-var percentText;
-var percentBar;
-var percentBarFill;
-var toDoList;
-var inputText;
+const express = require('express')
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/test');
+var bodyParser = require('body-parser');
 
+const fs = require('fs');
+let path = require('path');
 
-// Get references to HTML elements - stats UI, to do list, input text
-function initialize() {
-    percentText = $("#percent-text");
-    percentBar = $("#percent-bar");
-    percentBarFill = $("#percent-bar-fill");
-    toDoList = $("#to-do-list");
-    inputText = $("#input-text");
-}
+// Init App
+const app = express()
 
+// Bring in models
+let ToDo = require('./models/toDo');
+let db = mongoose.connection;
 
-// Count number of to do items 
-// & number of completed to do items
-function countItems() {
-    count = 0;
-    completed = 0;
-    $.each($('.new-item'), function (index, toDoItem) {
-        count++;
-        if (toDoItem.firstChild.checked)
-            completed++;
+//check for db errors
+db.on('error', console.error.bind(console, 'connection error'));
 
-    });
-}
+//check connection
+db.once('open', function () {
+    //connected
+    console.log('Connected to MongoDB')
+});
 
+app.use((req, res, next) => {
+    //console.log("Logged!")
+    next()
+})
 
-// Update stats UI - percent text, percent bar
-function updateStatsUI() {
-    countItems();
-    var progressBarWidth = percentBar.css('width');
-    progressBarWidth = Number(progressBarWidth.slice(0, progressBarWidth.length - 2));
-    if (count == 0) {
-        percentBarFill.css('width', '0px')
-        console.log(percentBarFill.css('width'));
-        console.log(percentBarFill);
-        percentText.text('0%');
-    } else {
-        percentBarFill.css('width', '' + Math.round(completed / count * progressBarWidth) + 'px')
-        percentText.text('' + Math.round(completed / count * 100) + '%');
-    }
-}
+app.use(express.static(__dirname + '/public'));
 
+app.use(bodyParser.json());
 
-// Empty list
-function clearToDoList() {
-    toDoList.text("");
-    updateStatsUI();
-}
+// Home route
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname + 'index.html'));
+    //  console.log("hey: "+toDos.find());
+    //  res.send("Hey: "+toDos.);
+});
 
-// Make to-do items 'drag-&-drop'able
-function allowDragNDrop() {
-    $("#to-do-list").sortable();
-    $("#to-do-list").disableSelection();
-}
-
-
-// Get to-do items—stored as array of objects—from localStorage 
-// Dynamically create to-do items & populate the to-do list 
-function load() {
-    initialize();
-    allowDragNDrop();
-
-    let items = JSON.parse(localStorage.getItem('items'));
-    if (items == null) {
-        return false;
-    }
-    $.each(items, function (index, value) {
-        addToDo(value.toDoText, value.isChecked);
-    });
-    updateStatsUI();
-}
-
-
-// Store to-do items as array of objects inside localStorage
-function unload() {
-    let toDoItems = [];
-    $.each($('.new-item'), function (index, toDoItem) {
-        let isChecked = toDoItem.firstChild.checked;
-        let toDoText = toDoItem.firstChild.nextSibling.innerText;
-        let obj = {
-            isChecked: isChecked,
-            toDoText: toDoText
+app.get("/api/retrieve", (req, res) => {
+    ToDo.find({}, {}, function (err, toDos) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.send(toDos);
+            console.log("Items retrieved to server file: " + toDos);
         }
-        toDoItems.push(obj);
     });
-    localStorage.setItem('items', JSON.stringify(toDoItems));
-}
+});
 
-
-// Create a to-do item—consisting of a checkbox, a para & a delete button—& append to the to-do list
-// Provide appropriate event listeners
-function addToDo(toDoText = $('#input-text').val(), isChecked) {
-
-    //checkbox
-    let toDoCheck = $(`<input type = "checkbox"></input>`);
-    toDoCheck.prop('checked', isChecked);
-    toDoCheck.addClass('checkbox');
-    toDoCheck.on('click', updateStatsUI);
-
-    //para
-    let toDoPara = $(`<p>${toDoText}</p>`);
-    toDoPara.addClass('para');
-
-    //delete button
-    let toDoDeleteImg = $(`<img src = "img/delete.png"/>`);
-    toDoDeleteImg.addClass('delete-button').css('visibility', 'visible');
-    toDoDeleteImg.css('visibility', 'hidden');
-    toDoDeleteImg.on('click', deleteToDo);
-
-    //to-do item
-    let toDoListItem = $('<li></li>').append(toDoCheck).append(toDoPara).append(toDoDeleteImg);
-    toDoListItem.addClass('new-item');
-    toDoListItem.on('mouseenter', function () {
-        toDoDeleteImg.css('visibility', 'visible')
+app.put("/api/delete", (req, res) => {
+    var conditions = {
+        "toDoText": req.body.toDoText.trim()
+    };
+    console.log("The miracle 2.0 |"+req.body.toDoText.trim()+"|");
+    ToDo.deleteOne(conditions, function (err) {
+        if (err) {
+            return handleError(err);
+            console.log('delete error');
+        };
+        console.log("Deleted one");
     });
-    toDoListItem.on('mouseleave', function () {
-        toDoDeleteImg.css('visibility', 'hidden')
+});
+
+app.get("/api/clear", (req, res) => {
+    ToDo.deleteMany({}, function (err) {
+        if (err) {
+            return handleError(err);
+            console.log('clear error');
+        };
+        console.log("Deleted all");
     });
-    toDoList.append(toDoListItem);
+});
 
-    //reset value of input text & bring back focus
-    inputText.val('');
-    inputText.focus();
+app.post("/api/insert", (req, res) => {
+    //create document
+    console.log("The request check: " + req.body.doneCheck);
+    console.log("The request text: " + req.body.toDoText);
 
-    updateStatsUI();
-}
+    var toDo = new ToDo(req.body);
+    toDo.save();
+    //append toDo to response
+    res.send("Check: " + toDo.doneCheck + "Text: " + toDo.toDoText);
+});
 
+app.put("/api/update-checked", function(req, res) {
+    //create document
 
-// Delete to-do item
-function deleteToDo(event) {
-    $(event.target.parentElement).remove();
-    updateStatsUI();
-}
+    var conditions = {
+        "toDoText": req.body.toDoText.trim()
+    };
+    var update = {
+        $set: {
+            "doneCheck": req.body.doneCheck
+        }
+    };
+    // var options = {
+    //     multi: false
+    // };
 
+    console.log("update-checked check: " + req.body.doneCheck);
+    console.log("update-checked text: " + req.body.toDoText);
 
-//capture enter key released
-function keyUp(event) {
-    event.preventDefault();
-    //return if edit text contains only whitespaces
-    if (inputText.val().trim() == "") {
-        inputText.val('');
-        return;
-    }
-    if (event.key === 'Enter') {
-        addToDo();
-    }
-}
+    ToDo.updateOne(conditions, update, function (err, toDo) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log("update-checked" + toDo);
+        }
+    });
+});
+app.listen(3000, 'localhost', () => console.log("listening on port 3000"));

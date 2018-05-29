@@ -232,6 +232,7 @@ function addToDo(fromLoaded) {
     //To make an element draggable
     newItem.draggable = "true";
 
+    
     // sets the data type and the value of the dragged data.
     newItem.ondragstart = function (e) {
         console.log('drag start!');
