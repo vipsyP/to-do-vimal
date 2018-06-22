@@ -129,25 +129,8 @@ function unloading() {
     list = document.getElementById("list");
 }
 
-//ADD TO-DO
-function addToDo(fromLoaded) {
-    console.log('add function called!');
-    if (!fromLoaded) {
-        checkOrNot = false;
-    }
-
-    //return if task is empty
-    if (inputText.value == "") {
-        return;
-    }
-
-    //create container for checkbox, para
-    var newItem = document.createElement('li');
-    newItem.classList.add("new-item");
-
-
-    // append checkbox
-    var checkbox = document.createElement('input');
+// append checkbox to the to-do item
+function appendCheckbox(checkbox, newItem) {
     checkbox.type = "checkbox";
     checkbox.className = "checkbox";
     //restore checkbox state from localStorage
@@ -177,15 +160,11 @@ function addToDo(fromLoaded) {
 
         updateStats(percentText, percentBar, percentBarFill);
     }
+}
 
-    //append para
-    var para = document.createElement('p');
-    para.classList.add("para");
-    para.innerHTML = inputText.value;
-    newItem.appendChild(para);
+// append delete button to the to-do item
+function appendDeleteButton(checkbox, deleteButton, newItem) {
 
-    //append delete button
-    var deleteButton = document.createElement('img');
     deleteButton.classList.add("delete-button");
     deleteButton.src = "img/delete.png";
     deleteButton.style.visibility = "hidden";
@@ -216,10 +195,10 @@ function addToDo(fromLoaded) {
         updateStats(percentText, percentBar, percentBarFill);
     }
 
-    //append the to-do to the list
-    list.appendChild(newItem);
+}
 
-    //handle hover over to-do
+//handle hover over to-do
+function handleHover(deleteButton, newItem) {
     newItem.onmouseover = function () {
         // console.log('mouse over!');
         deleteButton.style.visibility = "visible";
@@ -228,7 +207,10 @@ function addToDo(fromLoaded) {
         // console.log('mouse out!');
         deleteButton.style.visibility = "hidden";
     }
+}
 
+// Add drag and drop feature
+function makeItemDragNDroppable(newItem) {
     //To make an element draggable
     newItem.draggable = "true";
 
@@ -243,7 +225,6 @@ function addToDo(fromLoaded) {
     newItem.ondragover = function (e) {
         console.log('drag over!');
         e.preventDefault();
-
     }
 
     newItem.ondrop = function (e) {
@@ -252,15 +233,7 @@ function addToDo(fromLoaded) {
         console.log('drop!');
 
         if ("" + e.target != "[object HTMLLIElement]") {
-
-            // console.log("1. Source: " + source + " : " + source.innerHTML);
-            // console.log("1. Destination parentElement: " + destination.parentElement + " : " + destination.parentElement.innerHTML);
-
             source.innerHTML = destination.parentElement.innerHTML;
-
-            // console.log("2. Source: " + source + " : " + source.innerHTML);
-            // console.log("2. Destination parentElement: " + destination.parentElement + " : " + destination.parentElement.innerHTML);
-
             if (destination.parentElement != null) {
                 destination.parentElement.innerHTML = temp;
             }
@@ -273,6 +246,46 @@ function addToDo(fromLoaded) {
         list.innerHTML = "";
         loaded();
     }
+}
+
+//ADD TO-DO
+function addToDo(fromLoaded) {
+    console.log('add function called!');
+    if (!fromLoaded) {
+        checkOrNot = false;
+    }
+
+    //return if task is empty
+    if (inputText.value == "") {
+        return;
+    }
+
+    //create container for checkbox, para
+    var newItem = document.createElement('li');
+    newItem.classList.add("new-item");
+
+    //append checkbox
+    var checkbox = document.createElement('input');
+    appendCheckbox(checkbox, newItem);
+
+    //append para
+    var para = document.createElement('p');
+    para.classList.add("para");
+    para.innerHTML = inputText.value;
+    newItem.appendChild(para);
+
+    //append delete button
+    var deleteButton = document.createElement('img');
+    appendDeleteButton(checkbox, deleteButton, newItem);
+
+    //append the to-do to the list
+    list.appendChild(newItem);
+
+    //handle hover over to-do
+    handleHover(deleteButton, newItem);
+
+    // Add drag and drop feature
+    makeItemDragNDroppable(newItem);
 
     //update stats UI, etc
     count++;

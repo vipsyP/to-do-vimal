@@ -134,6 +134,7 @@ body {
     margin-right: 16px;
     color: #838c91;
     padding-left: 8px;
+    word-break: break-all;
 }
 
 .delete-button {
