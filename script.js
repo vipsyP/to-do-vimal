@@ -25,6 +25,12 @@ function initialize() {
 }
 
 function clearStorage() {
+    var answer = window.confirm("Are you sure you want to clear storage? This will remove uncompleted items as well.");
+    if (!answer) {
+        return;
+    }
+
+
     console.log("clear local storage");
     count = 0;
     completed = 0;
@@ -173,6 +179,14 @@ function appendDeleteButton(checkbox, deleteButton, newItem) {
     //handle clicks on the delete button
     deleteButton.onclick = function () {
         console.log('delete button clicked!');
+
+        if (!checkbox.checked) {
+            var answer = window.confirm("This task hasn't been completed yet. Delete anyways?");
+            if (!answer) {
+                return;
+            }
+        }
+
         if (checkbox.checked == true) {
             completed--;
         }
