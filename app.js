@@ -1,17 +1,20 @@
-var count;
-var completed;
-var percentText;
-var percentBar;
-var percentBarFill;
+var statsUI = {
+    count: undefined,
+    completed: undefined,
+    percentText: undefined,
+    percentBar: undefined,
+    percentBarFill: undefined
+}
+
 var toDoList;
 var inputText;
 
 
 // Get references to HTML elements - stats UI, to do list, input text
 function initialize() {
-    percentText = $("#percent-text");
-    percentBar = $("#percent-bar");
-    percentBarFill = $("#percent-bar-fill");
+    statsUI.percentText = $("#percent-text");
+    statsUI.percentBar = $("#percent-bar");
+    statsUI.percentBarFill = $("#percent-bar-fill");
     toDoList = $("#to-do-list");
     inputText = $("#input-text");
 }
@@ -20,12 +23,12 @@ function initialize() {
 // Count number of to do items 
 // & number of completed to do items
 function countItems() {
-    count = 0;
-    completed = 0;
+    statsUI.count = 0;
+    statsUI.completed = 0;
     $.each($('.new-item'), function (index, toDoItem) {
-        count++;
+        statsUI.count++;
         if (toDoItem.firstChild.checked)
-            completed++;
+            statsUI.completed++;
 
     });
 }
@@ -34,16 +37,16 @@ function countItems() {
 // Update stats UI - percent text, percent bar
 function updateStatsUI() {
     countItems();
-    var progressBarWidth = percentBar.css('width');
+    var progressBarWidth = statsUI.percentBar.css('width');
     progressBarWidth = Number(progressBarWidth.slice(0, progressBarWidth.length - 2));
-    if (count == 0) {
-        percentBarFill.css('width', '0px')
-        console.log(percentBarFill.css('width'));
-        console.log(percentBarFill);
-        percentText.text('0%');
+    if (statsUI.count == 0) {
+        statsUI.percentBarFill.css('width', '0px')
+        console.log(statsUI.percentBarFill.css('width'));
+        console.log(statsUI.percentBarFill);
+        statsUI.percentText.text('0%');
     } else {
-        percentBarFill.css('width', '' + Math.round(completed / count * progressBarWidth) + 'px')
-        percentText.text('' + Math.round(completed / count * 100) + '%');
+        statsUI.percentBarFill.css('width', '' + Math.round(statsUI.completed / statsUI.count * progressBarWidth) + 'px')
+        statsUI.percentText.text('' + Math.round(statsUI.completed / statsUI.count * 100) + '%');
     }
 }
 
